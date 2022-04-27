@@ -119,4 +119,44 @@ Queryrouter.post("/getqueries",(req,res)=>{
         })
     }
 })
+
+Queryrouter.post("/answerquestion",(req,res)=>{
+    const {queryid,answer,timestamp,staffid}=req.body
+    if (!queryid || !answer || !timestamp || !staffid ){
+        return res.json({
+            message:"Some fields are missing"
+        })
+    }
+    if (answer.length<2){
+        return res.status(401).json({
+            message:"Answer size should be larger than two characters"
+        })
+    }
+    Query.findOne({_id:queryid}).then(query=>{
+        if(!query){
+            return res.status(401).json({
+                message:"Query not found"
+            })
+        }
+        let q=query
+        q.answer=answer
+        q.answeredby=staffid
+        q.answeredat=new Date()
+        Query.updateOne({_id:queryid},q).then(res=>{
+            res.status(200).json({
+                message:"Successfully asnwered"
+            })
+        }).catch(err=>{
+            res.status(401).json({
+                message:"Could not answer"
+            })
+        })
+    }).catch(err=>{
+        res.status(401).json({
+            message:"Could not find query"
+        })
+    })
+
+})
+
 module.exports = Queryrouter

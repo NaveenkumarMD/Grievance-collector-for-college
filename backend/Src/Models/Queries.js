@@ -43,6 +43,12 @@ const QuerySchema=new Schema({
         type:Boolean,
         required:true
     },
-    
+    answeredat:{
+        type:Boolean
+    },
+    answeredby:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Staffs"
+    }
 })
 mongoose.model("Queries",QuerySchema)
